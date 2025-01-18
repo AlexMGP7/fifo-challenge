@@ -1,13 +1,23 @@
-import React from 'react';
+import {FC} from 'react';
+import { useInventory } from '../hooks/useInventory';
+import Table from '../components/table/table';
 
-const Dashboard: React.FC = () => {
+const Dashboard: FC = () => {
+  const { movements } = useInventory(); // Verifica que movimientos esté inicializado
+
+  if (!movements) {
+    return <p>Cargando movimientos...</p>;
+  }
+
   return (
-    <div className="rounded p-4">
-      <h2 className="font-bold text-lg">Pendientes</h2>
-      <p className="text-3xl">8</p> {/* Número dinámico de tareas pendientes */}
-      <p className="text-sm ">Total en la cola FIFO</p>
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-4">Inventario</h1>
+      {movements.length > 0 ? (
+        <Table movements={movements} />
+      ) : (
+        <p>No hay movimientos registrados.</p>
+      )}
     </div>
-
   );
 };
 

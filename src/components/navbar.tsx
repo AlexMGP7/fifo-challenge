@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Disclosure,
-  DisclosureButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems
-} from '@headlessui/react';
+import { Disclosure, DisclosureButton } from '@headlessui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
 
@@ -15,7 +8,6 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', current: true },
   { name: 'FIFO Tasks', href: '/tasks', current: false },
   { name: 'History', href: '/history', current: false },
-  // Añade o quita secciones según tus necesidades (por ejemplo, 'Users' o 'Settings')
 ];
 
 // Función para combinar clases de Tailwind
@@ -101,8 +93,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Sección derecha (modo oscuro, perfil, etc.) */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+          {/* Sección derecha (modo oscuro y cerrar sesión) */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2">
             {/* Botón para alternar modo oscuro */}
             <button
               onClick={toggleDarkMode}
@@ -112,36 +104,13 @@ export default function Navbar() {
               {isDarkMode ? '🌙' : '☀️'}
             </button>
 
-            {/* Dropdown de perfil */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="flex rounded-full bg-gray-800 text-sm focus:outline-none">
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src="https://via.placeholder.com/150"
-                    alt="User Avatar"
-                  />
-                </MenuButton>
-              </div>
-              <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Your Profile
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <button
-                    onClick={handleSignOut}
-                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Sign out
-                  </button>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+            {/* Botón de cerrar sesión */}
+            <button
+              onClick={handleSignOut}
+              className="ml-4 rounded-md bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </div>
