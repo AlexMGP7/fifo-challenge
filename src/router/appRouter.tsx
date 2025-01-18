@@ -8,6 +8,7 @@ import Loading from '../components/loading';
 
 import Dashboard from '../pages/dashboard';
 import Login from '../pages/login';
+import AddProduct from '../pages/addProduct';
 
 const AppRouter: React.FC = () => {
   const { loading } = useAuth();
@@ -44,18 +45,19 @@ const AppRouter: React.FC = () => {
         />
 
         {/* Ejemplo de otras rutas protegidas */}
-        {/* 
+         
         <Route
-          path="/queue"
+          path="/add-product"
           element={
             <PrivateRoute>
               <>
                 <Example />
-                <Queue />
+                <AddProduct />
               </>
             </PrivateRoute>
           }
         />
+        {/*
         <Route
           path="/history"
           element={

@@ -10,7 +10,7 @@ interface TableProps {
 const Table: React.FC<TableProps> = ({ movements }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse border border-gray-300 dark:border-gray-700 text-sm">
+      <table className="min-w-full border-collapse border text-sm">
         <TableHeader />
         <tbody>
           {movements.map((movement) => (
