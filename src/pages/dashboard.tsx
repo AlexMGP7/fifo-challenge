@@ -7,13 +7,12 @@ const Dashboard: FC = () => {
   const { movements } = useInventory();
   const navigate = useNavigate();
 
-  // Mientras movements sea null, no renderiza nada (el padre muestra `Loading`)
   if (movements === null) {
     return null;
   }
 
   const handleAddProduct = () => {
-    navigate('/add-product'); // Navega a la página para agregar productos
+    navigate('/add-product'); 
   };
 
   return (

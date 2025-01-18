@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { useAuth } from '../contexts/authContext';
@@ -22,7 +22,7 @@ const AppRouter: FC = () => {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/login" element={<Login />} />
-        
+
         {/* 
           Rutas protegidas: envueltas en <PrivateRoute> 
           para requerir autenticación 
@@ -45,7 +45,7 @@ const AppRouter: FC = () => {
         />
 
         {/* Ejemplo de otras rutas protegidas */}
-         
+
         <Route
           path="/add-product"
           element={
