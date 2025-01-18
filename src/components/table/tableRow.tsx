@@ -15,6 +15,13 @@ const TableRow: FC<TableRowProps> = ({ movement }) => {
   };
 
   const handleDelete = async () => {
+
+    if (!movement.id) {
+      console.error("Error: El ID del producto es indefinido.");
+      showError("No se puede eliminar el producto porque falta el ID.");
+      return;
+    }
+
     const confirmed = await showConfirmation(
       "¿Seguro que deseas eliminar este producto?",
       `Producto: "${movement.productName}"`
