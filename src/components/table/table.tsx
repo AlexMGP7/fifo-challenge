@@ -9,8 +9,8 @@ interface TableProps {
 
 const Table: FC<TableProps> = ({ movements }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse border text-sm">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table className="min-w-full border-collapse border text-sm ">
         <TableHeader />
         <tbody>
           {movements.map((movement) => (

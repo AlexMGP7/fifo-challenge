@@ -1,29 +1,45 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInventory } from '../hooks/useInventory';
 import Table from '../components/table/table';
 
-import { useState } from 'react';
+const ITEMS_PER_PAGE = 10; // Cantidad de elementos por página
 
 const Dashboard: FC = () => {
   const { movements } = useInventory();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   if (movements === null) {
     return null;
   }
 
+  // Filtrar movimientos según la búsqueda
   const filteredMovements = movements.filter((movement) =>
     movement.productName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Calcular la cantidad total de páginas
+  const totalPages = Math.ceil(filteredMovements.length / ITEMS_PER_PAGE);
+
+  // Obtener los movimientos para la página actual
+  const paginatedMovements = filteredMovements.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Calcular estadísticas
   const totalInventoryUnits = movements.reduce((sum, movement) => sum + movement.inventory.units, 0);
   const totalInventoryValue = movements.reduce((sum, movement) => sum + movement.inventory.total, 0);
 
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
-
     <div className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
         <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
@@ -58,14 +74,36 @@ const Dashboard: FC = () => {
         className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
       />
 
-      {filteredMovements.length > 0 ? (
-        <Table movements={filteredMovements} />
+      {paginatedMovements.length > 0 ? (
+        <>
+          <Table movements={paginatedMovements} />
+
+          {/* Controles de Paginación */}
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="bg-gray-300 hover:bg-gray-400 font-bold py-2 px-4 rounded dark:bg-gray-700 dark:hover:bg-gray-600"
+              disabled={currentPage === 1}
+            >
+              Anterior
+            </button>
+            <p>
+              Página {currentPage} de {totalPages}
+            </p>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="bg-gray-300 hover:bg-gray-400 font-bold py-2 px-4 rounded dark:bg-gray-700 dark:hover:bg-gray-600"
+              disabled={currentPage === totalPages}
+            >
+              Siguiente
+            </button>
+          </div>
+        </>
       ) : (
         <p className="text-center text-gray-500">No se encontraron resultados.</p>
       )}
     </div>
   );
 };
-
 
 export default Dashboard;
