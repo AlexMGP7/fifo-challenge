@@ -2,10 +2,12 @@ import React from 'react';
 
 const Dashboard: React.FC = () => {
   return (
-    <div>
-      <h1>Welcome to the Dashboard Page</h1>
-      <p>This is the main landing page of the application.</p>
+    <div className="rounded p-4">
+      <h2 className="font-bold text-lg">Pendientes</h2>
+      <p className="text-3xl">8</p> {/* Número dinámico de tareas pendientes */}
+      <p className="text-sm ">Total en la cola FIFO</p>
     </div>
+
   );
 };
 
