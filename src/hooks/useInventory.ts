@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getInventoryMovements } from '../service/inventoryService';
+import { getInventoryMovements } from '../services/inventoryService';
 import { Movement } from '../types/inventory';
 
 export const useInventory = () => {
