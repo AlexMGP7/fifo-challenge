@@ -1,12 +1,13 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import { useInventory } from '../hooks/useInventory';
 import Table from '../components/table/table';
 
 const Dashboard: FC = () => {
-  const { movements } = useInventory(); // Verifica que movimientos esté inicializado
+  const { movements } = useInventory();
 
-  if (!movements) {
-    return <p>Cargando movimientos...</p>;
+  // Mientras movements sea null, no renderiza nada (el padre muestra `Loading`)
+  if (movements === null) {
+    return null;
   }
 
   return (
@@ -15,7 +16,7 @@ const Dashboard: FC = () => {
       {movements.length > 0 ? (
         <Table movements={movements} />
       ) : (
-        <p>No hay movimientos registrados.</p>
+        <p className="text-center text-gray-500">No hay movimientos registrados.</p>
       )}
     </div>
   );

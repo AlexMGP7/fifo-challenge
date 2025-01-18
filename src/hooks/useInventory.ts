@@ -3,23 +3,28 @@ import { getInventoryMovements } from '../service/inventoryService';
 import { Movement } from '../types/inventory';
 
 export const useInventory = () => {
-  const [movements, setMovements] = useState<Movement[]>([]); // Aquí definimos el tipo correcto
-  const [loading, setLoading] = useState(true);
+  const [movements, setMovements] = useState<Movement[] | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getInventoryMovements();
-        setMovements(data); // Ahora TypeScript no da error
+        // Filtra movimientos inválidos (sin productName o con datos incompletos)
+        const validMovements = data.filter(
+          (movement) =>
+            movement.productName &&
+            movement.date &&
+            movement.entry?.units !== undefined &&
+            movement.inventory?.units !== undefined
+        );
+        setMovements(validMovements);
       } catch (error) {
-        console.error('Error al cargar los movimientos:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error al cargar movimientos:', error);
       }
     };
 
     fetchData();
   }, []);
 
-  return { movements, loading };
+  return { movements };
 };
