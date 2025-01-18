@@ -1,12 +1,12 @@
-import React from 'react';
+import {ReactElement, FC} from 'react';
 import { Navigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 
 interface PrivateRouteProps {
-  children: React.ReactElement;
+  children: ReactElement;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+const PrivateRoute: FC<PrivateRouteProps> = ({ children }) => {
   const auth = getAuth();
   const user = auth.currentUser;
 

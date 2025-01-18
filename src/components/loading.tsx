@@ -1,6 +1,6 @@
-import React from 'react';
+import {FC} from 'react';
 
-const Loading: React.FC = () => {
+const Loading: FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
       <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid mb-4"></div>

@@ -1,7 +1,7 @@
-import React from 'react';
+import {FC, ReactNode} from 'react';
 import useTheme from '../hooks/useTheme';
 
-const LocalThemeContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const LocalThemeContainer: FC<{ children: ReactNode }> = ({ children }) => {
     const { theme, toggleTheme } = useTheme();
   
     const currentPath = window.location.pathname;

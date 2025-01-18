@@ -1,11 +1,11 @@
-import React from 'react';
+import {FC} from 'react';
 import { Movement } from '../../types/inventory';
 
 interface TableRowProps {
   movement: Movement;
 }
 
-const TableRow: React.FC<TableRowProps> = ({ movement }) => {
+const TableRow: FC<TableRowProps> = ({ movement }) => {
   return (
     <tr className="even:bg-gray-300 odd:bg-white dark:even:bg-gray-900 dark:odd:bg-gray-800">
       <td className="border border-gray-400 dark:border-gray-700 px-4 py-2">{movement.productName}</td>

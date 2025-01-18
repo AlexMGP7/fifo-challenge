@@ -1,4 +1,4 @@
-import React from 'react';
+import {FC} from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { useAuth } from '../contexts/authContext';
@@ -10,7 +10,7 @@ import Dashboard from '../pages/dashboard';
 import Login from '../pages/login';
 import AddProduct from '../pages/addProduct';
 
-const AppRouter: React.FC = () => {
+const AppRouter: FC = () => {
   const { loading } = useAuth();
 
   if (loading) {

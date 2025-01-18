@@ -1,6 +1,6 @@
-import React from 'react';
+import {FC} from 'react';
 
-const TableHeader: React.FC = () => {
+const TableHeader: FC = () => {
   return (
     <thead>
       <tr className="bg-gray-300 dark:bg-gray-900 text-gray-900 dark:text-gray-100">

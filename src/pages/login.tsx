@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import {FC, FormEvent, useState } from 'react';
 import { auth } from '../services/firebaseConfig'; // Asegúrate de que la ruta sea correcta
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
-const Login: React.FC = () => {
+const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -11,7 +11,7 @@ const Login: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (isRegister && password !== confirmPassword) {
@@ -23,7 +23,6 @@ const Login: React.FC = () => {
       if (isRegister) {
         await createUserWithEmailAndPassword(auth, email, password);
         console.log('Registro exitoso:', { firstName, lastName });
-        // Aquí puedes enviar el nombre y apellido a la base de datos
       } else {
         await signInWithEmailAndPassword(auth, email, password);
         console.log('Inicio de sesión exitoso');

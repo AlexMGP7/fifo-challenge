@@ -1,15 +1,15 @@
-import React from 'react';
+import {ChangeEvent,FC } from 'react';
 
 interface FormFieldProps {
   id: string;
   label: string;
   value: string | number | undefined;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   type?: string;
 }
 
-const FormField: React.FC<FormFieldProps> = ({
+const FormField: FC<FormFieldProps> = ({
   id,
   label,
   value,

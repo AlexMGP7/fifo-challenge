@@ -1,4 +1,4 @@
-import React from 'react';
+import {FC} from 'react';
 import TableHeader from './tableHeader';
 import TableRow from './tableRow';
 import { Movement } from '../../types/inventory';
@@ -7,7 +7,7 @@ interface TableProps {
   movements: Movement[];
 }
 
-const Table: React.FC<TableProps> = ({ movements }) => {
+const Table: FC<TableProps> = ({ movements }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse border text-sm">
