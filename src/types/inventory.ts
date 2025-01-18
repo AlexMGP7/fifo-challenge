@@ -1,5 +1,5 @@
 export interface Movement {
-    id?: string;
+    id: string;
     productName: string;
     date: string;
     entry?: {

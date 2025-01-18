@@ -11,3 +11,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Fondo personalizado */
+.swal-custom-popup {
+  background-color: #1F2937; /* Fondo gris oscuro */
+  color: #F9FAFB; /* Texto blanco */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* Espaciado entre botones */
+.swal-custom-actions {
+  display: flex;
+  justify-content: center; /* Centrar botones */
+  gap: 1rem; /* Espaciado entre botones */
+}

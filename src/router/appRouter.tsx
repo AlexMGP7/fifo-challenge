@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { useAuth } from '../contexts/authContext';
 import PrivateRoute from '../components/privateRoute';
-import Example from '../components/navbar';
 import Loading from '../components/loading';
+import ProtectedLayout from '../layouts/protectedLayout';
 
 import Dashboard from '../pages/dashboard';
 import Login from '../pages/login';
@@ -20,56 +20,30 @@ const AppRouter: FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Rutas públicas */}
+        {/* Ruta pública */}
         <Route path="/login" element={<Login />} />
 
-        {/* 
-          Rutas protegidas: envueltas en <PrivateRoute> 
-          para requerir autenticación 
-        */}
+        {/* Rutas protegidas con Layout */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              {/* 
-                Navbar + Contenido 
-                Puedes renderizar el Navbar aquí dentro 
-                o en cada página que lo requiera 
-              */}
-              <>
-                <Example />
+              <ProtectedLayout>
                 <Dashboard />
-              </>
+              </ProtectedLayout>
             </PrivateRoute>
           }
         />
-
-        {/* Ejemplo de otras rutas protegidas */}
-
         <Route
           path="/add-product"
           element={
             <PrivateRoute>
-              <>
-                <Example />
+              <ProtectedLayout>
                 <AddProduct />
-              </>
+              </ProtectedLayout>
             </PrivateRoute>
           }
         />
-        {/*
-        <Route
-          path="/history"
-          element={
-            <PrivateRoute>
-              <>
-                <Example />
-                <History />
-              </>
-            </PrivateRoute>
-          }
-        />
-        */}
       </Routes>
     </Router>
   );

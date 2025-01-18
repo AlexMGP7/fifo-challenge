@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../utils/dateUtils';
 import FormField from './formField';
 import BackButton from '../backButton';
+import { showError, showSuccess } from '../../utils/swalUtils';
 
 const ProductForm: FC = () => {
   const [productName, setProductName] = useState('');
@@ -33,10 +34,11 @@ const ProductForm: FC = () => {
 
     try {
       await addInventoryMovement(newMovement);
-      alert('Producto agregado exitosamente');
-      navigate('/dashboard');
+      showSuccess("Producto agregado exitosamente"); // Mensaje de éxito estilizado
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Error al agregar el producto:', error);
+      console.error("Error al agregar el producto:", error);
+      showError("Error al agregar el producto. Intenta nuevamente."); // Mensaje de error estilizado
     }
   };
 

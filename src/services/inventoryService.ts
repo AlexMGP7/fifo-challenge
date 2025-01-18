@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Movement } from '../types/inventory';
 
@@ -22,5 +22,15 @@ export const addInventoryMovement = async (movement: Movement): Promise<string> 
   } catch (error) {
     console.error('Error al agregar el movimiento:', error);
     throw new Error('No se pudo agregar el movimiento');
+  }
+};
+
+export const deleteInventoryMovement = async (id: string): Promise<void> => {
+  try {
+    const docRef = doc(db, 'movements', id);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error('Error al eliminar el documento:', error);
+    throw error;
   }
 };
