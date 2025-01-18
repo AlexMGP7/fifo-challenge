@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth } from '../service/firebase/firebaseConfig'; // Asegúrate de que la ruta sea correcta
+import { auth } from '../service/firebaseConfig'; // Asegúrate de que la ruta sea correcta
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Login: React.FC = () => {

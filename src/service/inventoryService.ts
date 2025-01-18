@@ -1,5 +1,5 @@
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { app } from './firebase/firebaseConfig';
+import { app } from './firebaseConfig';
 import { Movement } from '../types/inventory';
 
 const db = getFirestore(app);
