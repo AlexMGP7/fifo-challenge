@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
@@ -14,6 +15,28 @@ function classNames(...classes: string[]) {
 }
 
 export default function Example() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Cargar la preferencia del usuario desde localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    setIsDarkMode(!isDarkMode);
+  };
+
   const handleSignOut = async () => {
     const auth = getAuth();
     try {
@@ -24,7 +47,6 @@ export default function Example() {
       console.error('Error al cerrar sesión:', error);
     }
   };
-
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -65,6 +87,19 @@ export default function Example() {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <button
+              onClick={toggleDarkMode}
+              type="button"
+              className="relative mr-4 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+            >
+              <span className="absolute -inset-1.5" />
+              <span className="sr-only">Toggle Dark Mode</span>
+              {isDarkMode ? (
+                <span>🌙</span> // Icono para modo oscuro
+              ) : (
+                <span>☀️</span> // Icono para modo claro
+              )}
+            </button>
             <button
               type="button"
               className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"

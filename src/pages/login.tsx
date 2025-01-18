@@ -36,14 +36,14 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white dark:bg-gray-900">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           alt="FIFO System"
           src="/src/assets/img/box.png"
           className="mx-auto h-12 w-auto"
         />
-        <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {isRegister ? 'Create your account' : 'Sign in to your account'}
         </h2>
       </div>
@@ -53,7 +53,7 @@ const Login: React.FC = () => {
           {isRegister && (
             <>
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
                   First Name
                 </label>
                 <div className="mt-2">
@@ -64,12 +64,12 @@ const Login: React.FC = () => {
                     required
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
                   Last Name
                 </label>
                 <div className="mt-2">
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
                     required
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                   />
                 </div>
               </div>
@@ -88,7 +88,7 @@ const Login: React.FC = () => {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-900">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
               Email address
             </label>
             <div className="mt-2">
@@ -100,13 +100,13 @@ const Login: React.FC = () => {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
               Password
             </label>
             <div className="mt-2">
@@ -118,14 +118,14 @@ const Login: React.FC = () => {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
               />
             </div>
           </div>
 
           {isRegister && (
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
                 Confirm Password
               </label>
               <div className="mt-2">
@@ -136,7 +136,7 @@ const Login: React.FC = () => {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                  className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                 />
               </div>
             </div>
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
           </p>
         )}
 
-        <p className="mt-10 text-center text-sm text-gray-500">
+        <p className="mt-10 text-center text-sm text-gray-500 dark:text-gray-400">
           {isRegister ? 'Already have an account?' : 'Not a member?'}{' '}
           <button
             onClick={() => setIsRegister(!isRegister)}
