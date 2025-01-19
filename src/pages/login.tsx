@@ -1,6 +1,7 @@
-import {FC, FormEvent, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { auth } from '../services/firebaseConfig'; // Asegúrate de que la ruta sea correcta
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import FormField from '../components/form/formField'; // Asegúrate de que la ruta sea correcta
 
 const Login: FC = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ const Login: FC = () => {
     event.preventDefault();
 
     if (isRegister && password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
@@ -35,14 +36,14 @@ const Login: FC = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white dark:bg-gray-900">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           alt="FIFO System"
-          src="/src/assets/img/box.png"
+          src="/img/box.png"
           className="mx-auto h-12 w-auto"
         />
-        <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <h2 className="mt-10 text-center text-2xl font-bold tracking-tight">
           {isRegister ? 'Create your account' : 'Sign in to your account'}
         </h2>
       </div>
@@ -51,96 +52,43 @@ const Login: FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {isRegister && (
             <>
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
-                  First Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
-                  Last Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    required
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                  />
-                </div>
-              </div>
+              <FormField
+                id="firstName"
+                label="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+              <FormField
+                id="lastName"
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
             </>
           )}
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
-              Email address
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
-              Password
-            </label>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-              />
-            </div>
-          </div>
-
+          <FormField
+            id="email"
+            label="Email address"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           {isRegister && (
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 dark:text-gray-300">
-                Confirm Password
-              </label>
-              <div className="mt-2">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-gray-300 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                />
-              </div>
-            </div>
+            <FormField
+              id="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           )}
-
           <div>
             <button
               type="submit"

@@ -1,14 +1,14 @@
-import { FC } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { FC } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-import { useAuth } from '../contexts/authContext';
-import PrivateRoute from '../components/privateRoute';
-import Loading from '../components/loading';
-import ProtectedLayout from '../layouts/protectedLayout';
+import { useAuth } from "../contexts/authContext";
+import PrivateRoute from "../components/privateRoute";
+import Loading from "../components/loading";
+import ProtectedLayout from "../layouts/protectedLayout";
 
-import Dashboard from '../pages/dashboard';
-import Login from '../pages/login';
-import AddProduct from '../pages/addProduct';
+import Dashboard from "../pages/dashboard";
+import Login from "../pages/login";
+import AddProduct from "../pages/addProduct";
 
 const AppRouter: FC = () => {
   const { loading } = useAuth();
@@ -20,6 +20,9 @@ const AppRouter: FC = () => {
   return (
     <Router>
       <Routes>
+        {/* Redirección desde la raíz */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Ruta pública */}
         <Route path="/login" element={<Login />} />
 
@@ -44,6 +47,9 @@ const AppRouter: FC = () => {
             </PrivateRoute>
           }
         />
+
+        {/* Ruta por defecto en caso de 404 */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

@@ -8,7 +8,7 @@ const LocalThemeContainer: FC<{ children: ReactNode }> = ({ children }) => {
     const isLoginPage = currentPath === '/login';
   
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300 ease-in-out">
         {isLoginPage && (
           <button
             onClick={toggleTheme}
@@ -22,5 +22,4 @@ const LocalThemeContainer: FC<{ children: ReactNode }> = ({ children }) => {
     );
   };
   
-
 export default LocalThemeContainer;

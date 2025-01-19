@@ -53,7 +53,7 @@ export default function Navbar() {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             {/* Logo */}
             <div className="flex items-center">
-              <img className="h-8 w-auto" src="/src/assets/img/box.png" alt="FIFO System" />
+              <img className="h-8 w-auto" src="/img/box.png" alt="FIFO System" />
             </div>
 
             {/* Links de navegación */}
