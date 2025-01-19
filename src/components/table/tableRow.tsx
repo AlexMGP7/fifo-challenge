@@ -45,8 +45,8 @@ const TableRow: FC<TableRowProps> = ({ movement }) => {
         {movement.entry ? (
           <>
             <p>Unidades: {movement.entry?.units || '-'}</p>
-            <p>Precio/U: {movement.entry?.pricePerUnit || '-'}$</p>
-            <p>Importe: {movement.entry?.total || '-'}$</p>
+            <p>Precio/U: ${movement.entry?.pricePerUnit || '-'}</p>
+            <p>Importe: ${movement.entry?.total || '-'}</p>
           </>
         ) : (
           <p>-</p>
@@ -56,8 +56,8 @@ const TableRow: FC<TableRowProps> = ({ movement }) => {
         {movement.exit ? (
           <>
             <p>Unidades: {movement.exit?.units || '-'}</p>
-            <p>Precio/U: {movement.exit?.pricePerUnit || '-'}$</p>
-            <p>Importe: {movement.exit?.total || '-'}$</p>
+            <p>Precio/U: ${movement.exit?.pricePerUnit || '-'}</p>
+            <p>Importe: ${movement.exit?.total || '-'}</p>
           </>
         ) : (
           <p>-</p>
@@ -65,8 +65,8 @@ const TableRow: FC<TableRowProps> = ({ movement }) => {
       </td>
       <td className="border border-gray-400 dark:border-gray-700 px-4 py-2">
         <p>Unidades: {movement.inventory?.units || '-'}</p>
-        <p>Precio/U: {movement.inventory?.pricePerUnit || '-'}$</p>
-        <p>Importe: {movement.inventory?.total || '-'}$</p>
+        <p>Precio/U: ${movement.inventory?.pricePerUnit || '-'}</p>
+        <p>Importe: ${movement.inventory?.total || '-'}</p>
       </td>
       <td className="border border-gray-400 dark:border-gray-700 px-4 py-2 align-middle">
         <div className="flex items-center justify-center h-full space-x-2">

@@ -1,19 +1,31 @@
-import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useInventory } from '../hooks/useInventory';
-import Table from '../components/table/table';
+import { FC, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore"; 
+import Table from "../components/table/table";
+import { Movement } from "../types/inventory"; 
 
-const ITEMS_PER_PAGE = 10; // Cantidad de elementos por página
+const ITEMS_PER_PAGE = 8; // Cantidad de elementos por página
 
 const Dashboard: FC = () => {
-  const { movements } = useInventory();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [movements, setMovements] = useState<Movement[]>([]); // Estado tipado con Movement[]
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  if (movements === null) {
-    return null;
-  }
+  useEffect(() => {
+    const db = getFirestore(); // Obtén la instancia de Firestore
+    const movementsCollection = collection(db, "movements"); // Colección de Firestore
+
+    const unsubscribe = onSnapshot(movementsCollection, (snapshot) => {
+      const updatedMovements = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Movement[]; // Forzar el tipo Movement[]
+      setMovements(updatedMovements); // Actualiza el estado con los datos nuevos
+    });
+
+    return () => unsubscribe(); // Limpia el listener al desmontar
+  }, []);
 
   // Filtrar movimientos según la búsqueda
   const filteredMovements = movements.filter((movement) =>
@@ -30,8 +42,14 @@ const Dashboard: FC = () => {
   );
 
   // Calcular estadísticas
-  const totalInventoryUnits = movements.reduce((sum, movement) => sum + movement.inventory.units, 0);
-  const totalInventoryValue = movements.reduce((sum, movement) => sum + movement.inventory.total, 0);
+  const totalInventoryUnits = movements.reduce(
+    (sum, movement) => sum + movement.inventory.units,
+    0
+  );
+  const totalInventoryValue = movements.reduce(
+    (sum, movement) => sum + movement.inventory.total,
+    0
+  );
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -41,6 +59,7 @@ const Dashboard: FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
+      {/* Estadísticas */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
         <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
           <h2 className="text-lg font-bold">Total de Productos</h2>
@@ -56,10 +75,11 @@ const Dashboard: FC = () => {
         </div>
       </div>
 
+      {/* Tabla */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Inventario</h1>
         <button
-          onClick={() => navigate('/add-product')}
+          onClick={() => navigate("/add-product")}
           className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded"
         >
           Agregar Producto
