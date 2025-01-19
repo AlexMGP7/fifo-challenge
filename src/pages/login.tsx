@@ -16,7 +16,7 @@ const Login: FC = () => {
     event.preventDefault();
 
     if (isRegister && password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Las contraseñas no coinciden');
       return;
     }
 
@@ -31,7 +31,7 @@ const Login: FC = () => {
       window.location.href = '/dashboard';
     } catch (err: any) {
       console.error('Error:', err.message);
-      setError(err.message);
+      setError('Ocurrió un error al procesar tu solicitud');
     }
   };
 
@@ -44,7 +44,7 @@ const Login: FC = () => {
           className="mx-auto h-12 w-auto"
         />
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight">
-          {isRegister ? 'Create your account' : 'Sign in to your account'}
+          {isRegister ? 'Crea tu cuenta' : 'Inicia sesión en tu cuenta'}
         </h2>
       </div>
 
@@ -54,13 +54,13 @@ const Login: FC = () => {
             <>
               <FormField
                 id="firstName"
-                label="First Name"
+                label="Nombre"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
               <FormField
                 id="lastName"
-                label="Last Name"
+                label="Apellido"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
@@ -68,14 +68,14 @@ const Login: FC = () => {
           )}
           <FormField
             id="email"
-            label="Email address"
+            label="Correo electrónico"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <FormField
             id="password"
-            label="Password"
+            label="Contraseña"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -83,7 +83,7 @@ const Login: FC = () => {
           {isRegister && (
             <FormField
               id="confirmPassword"
-              label="Confirm Password"
+              label="Confirmar contraseña"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -94,7 +94,7 @@ const Login: FC = () => {
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              {isRegister ? 'Register' : 'Sign in'}
+              {isRegister ? 'Registrar' : 'Iniciar sesión'}
             </button>
           </div>
         </form>
@@ -106,12 +106,12 @@ const Login: FC = () => {
         )}
 
         <p className="mt-10 text-center text-sm text-gray-500 dark:text-gray-400">
-          {isRegister ? 'Already have an account?' : 'Not a member?'}{' '}
+          {isRegister ? '¿Ya tienes una cuenta?' : '¿No tienes cuenta?'}{' '}
           <button
             onClick={() => setIsRegister(!isRegister)}
             className="font-semibold text-indigo-600 hover:text-indigo-500"
           >
-            {isRegister ? 'Login' : 'Register now'}
+            {isRegister ? 'Inicia sesión' : 'Regístrate ahora'}
           </button>
         </p>
       </div>

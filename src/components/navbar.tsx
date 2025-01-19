@@ -5,9 +5,8 @@ import { getAuth, signOut } from 'firebase/auth';
 import { FC } from 'react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', current: true },
-  { name: 'FIFO Tasks', href: '/tasks', current: false },
-  { name: 'History', href: '/history', current: false },
+  { name: 'Principal', href: '/dashboard', current: true },
+  { name: 'Historial', href: '/history', current: false },
 ];
 
 const getNavLinkClasses = (current: boolean) =>
@@ -52,9 +51,14 @@ export default function Navbar() {
           {/* Navegación principal */}
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             {/* Logo */}
-            <div className="flex items-center">
-              <img className="h-8 w-auto" src="/img/box.png" alt="FIFO System" />
+            <div className="hidden sm:flex items-center">
+              <img
+                className="h-8 w-auto sm:h-10"
+                src="/img/box.png"
+                alt="FIFO System"
+              />
             </div>
+
 
             {/* Links de navegación */}
             <div className="hidden sm:ml-6 sm:block">
@@ -76,11 +80,14 @@ export default function Navbar() {
             </button>
 
             {/* Cerrar sesión */}
-            <button
-              onClick={handleSignOut}
-              className="ml-4 rounded-md bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600"
-            >
-              Cerrar Sesión
+            <button onClick={handleSignOut} className="ml-4 flex items-center">
+              <span className="sr-only">Cerrar sesión</span>
+              {/* Ícono desde /public/img/logout.svg */}
+              <img
+                src="/img/logout.svg"
+                alt="Cerrar sesión"
+                className="h-8 w-8"
+              />
             </button>
           </div>
         </div>
