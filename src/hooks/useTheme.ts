@@ -2,28 +2,27 @@ import { useEffect, useState } from 'react';
 
 const useTheme = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    // Leer el tema inicial desde localStorage
+    // Lee el tema inicial desde localStorage o establece 'dark' como predeterminado
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark' ? 'dark' : 'light';
+    return savedTheme ? (savedTheme as 'light' | 'dark') : 'dark';
   });
 
-  // Aplicar el tema al cargar el componente o cuando cambie
   useEffect(() => {
+    const root = document.documentElement;
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
-    // Guardar el tema en localStorage
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Alternar entre los temas
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
   };
 
-  return { theme, toggleTheme };
+  return { theme, toggleTheme, setTheme };
 };
 
 export default useTheme;

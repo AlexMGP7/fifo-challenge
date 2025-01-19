@@ -127,7 +127,7 @@ const TableRow: FC<TableRowProps> = ({ movement }) => {
             disabled={loading}
             className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded"
           >
-            {loading ? "Procesando..." : "Registrar Salida"}
+            {loading ? "Procesando..." : "Salida"}
           </button>
           <button
             onClick={handleDelete}
