@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Movement } from '../types/inventory';
 
@@ -25,12 +25,37 @@ export const addInventoryMovement = async (movement: Movement): Promise<string> 
   }
 };
 
+// Elimina un movimiento del inventario
 export const deleteInventoryMovement = async (id: string): Promise<void> => {
   try {
     const docRef = doc(db, 'movements', id);
     await deleteDoc(docRef);
   } catch (error) {
     console.error('Error al eliminar el documento:', error);
+    throw error;
+  }
+};
+
+// Actualiza la salida de un movimiento en el inventario
+export const updateInventoryExit = async (id: string, unitsToExit: number, currentExitUnits: number, currentInventoryUnits: number): Promise<void> => {
+  if (unitsToExit > currentInventoryUnits) {
+    throw new Error('La cantidad a retirar excede el inventario disponible.');
+  }
+
+  try {
+    const docRef = doc(db, 'movements', id);
+
+    // Calcular nuevos valores
+    const updatedExit = currentExitUnits + unitsToExit;
+    const updatedInventory = currentInventoryUnits - unitsToExit;
+
+    // Actualizar documento en Firebase
+    await updateDoc(docRef, {
+      "exit.units": updatedExit,
+      "inventory.units": updatedInventory,
+    });
+  } catch (error) {
+    console.error('Error al registrar la salida:', error);
     throw error;
   }
 };

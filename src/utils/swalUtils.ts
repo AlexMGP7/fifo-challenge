@@ -42,3 +42,25 @@ export const showError = (message: string) => {
     timerProgressBar: true,
   });
 };
+
+export const showPrompt = async (title: string, inputPlaceholder: string): Promise<string | null> => {
+  const result = await baseSwal.fire({
+    title,
+    input: "text",
+    inputPlaceholder,
+    showCancelButton: true,
+    confirmButtonText: "Aceptar",
+    cancelButtonText: "Cancelar",
+    inputValidator: (value) => {
+      if (!value) {
+        return "Este campo no puede estar vacío.";
+      }
+      if (isNaN(Number(value)) || Number(value) <= 0) {
+        return "Ingresa un número válido mayor que 0.";
+      }
+      return null;
+    },
+  });
+
+  return result.isConfirmed ? result.value : null; // Devuelve el valor o null si se cancela
+};
