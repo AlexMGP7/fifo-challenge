@@ -1,7 +1,6 @@
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css"; // Importa los estilos de SweetAlert2
 
-// Configuración base
 export const baseSwal = Swal.mixin({
   customClass: {
     popup: "swal-custom-popup", // Clase personalizada para el fondo
@@ -12,7 +11,6 @@ export const baseSwal = Swal.mixin({
   buttonsStyling: false, // Usar estilos personalizados
 });
 
-// Confirmación genérica
 export const showConfirmation = async (title: string, text: string) => {
   const result = await baseSwal.fire({
     title,
@@ -25,7 +23,6 @@ export const showConfirmation = async (title: string, text: string) => {
   return result.isConfirmed; // Devuelve true si se confirma
 };
 
-// Alerta genérica de éxito
 export const showSuccess = (message: string) => {
   baseSwal.fire({
     icon: "success",
@@ -36,7 +33,6 @@ export const showSuccess = (message: string) => {
   });
 };
 
-// Alerta genérica de error
 export const showError = (message: string) => {
   baseSwal.fire({
     icon: "error",
