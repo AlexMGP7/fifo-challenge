@@ -5,51 +5,58 @@ import Table from "../components/table/table";
 import Stats from "../components/stats/stats";
 import SearchBar from "../components/searchBar/searchBar";
 import PaginationControls from "../components/paginationControls/paginationControls";
-import { Movement } from "../types/inventory";
+import { Product } from "../types/inventory";
 
 const ITEMS_PER_PAGE = 8;
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
-  const [movements, setMovements] = useState<Movement[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const db = getFirestore();
-    const movementsCollection = collection(db, "movements");
+    const productsCollection = collection(db, "products");
 
-    const unsubscribe = onSnapshot(movementsCollection, (snapshot) => {
-      const updatedMovements = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
+      const updatedProducts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as Movement[];
-      setMovements(updatedMovements);
+      })) as Product[];
+      setProducts(updatedProducts);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const filteredMovements = movements.filter((movement) =>
-    movement.productName.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filtrar productos según la consulta de búsqueda
+  const filteredProducts = products.filter((product) =>
+    product.productName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
-  const totalPages = Math.ceil(filteredMovements.length / ITEMS_PER_PAGE);
-
-  const paginatedMovements = filteredMovements.slice(
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
-  const totalInventoryUnits = movements.reduce(
-    (sum, movement) => sum + movement.inventory.units,
-    0
-  );
-
-  const totalInventoryValue = movements.reduce(
-    (sum, movement) => sum + movement.inventory.total,
-    0
-  );
+  // Calcular unidades y valor total del inventario a partir de todos los lotes
+  const totalInventoryUnits = products.reduce((sum, product) => {
+    const lots = product.lots || []; // Si product.lots es undefined, usar []
+    const productUnits = lots.reduce((acc, lote) => acc + (lote.units || 0), 0);
+    return sum + productUnits;
+  }, 0);
+  
+  const totalInventoryValue = products.reduce((sum, product) => {
+    const lots = product.lots || []; // Si product.lots es undefined, usar []
+    const productValue = lots.reduce(
+      (acc, lote) => acc + (lote.units || 0) * (lote.pricePerUnit || 0),
+      0
+    );
+    return sum + productValue;
+  }, 0);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -60,7 +67,7 @@ const Dashboard: FC = () => {
   return (
     <div className="container mx-auto px-4 py-6">
       <Stats
-        totalProducts={movements.length}
+        totalProducts={products.length}
         totalUnits={totalInventoryUnits}
         totalValue={totalInventoryValue}
       />
@@ -74,9 +81,9 @@ const Dashboard: FC = () => {
         </button>
       </div>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      {paginatedMovements.length > 0 ? (
+      {paginatedProducts.length > 0 ? (
         <>
-          <Table movements={paginatedMovements} />
+          <Table products={paginatedProducts} />
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}

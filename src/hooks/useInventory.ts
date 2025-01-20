@@ -1,30 +1,28 @@
 import { useState, useEffect } from 'react';
-import { getInventoryMovements } from '../services/inventoryService';
-import { Movement } from '../types/inventory';
+import { getProducts } from '../services/inventoryService'; 
+import { Product } from '../types/inventory';
 
 export const useInventory = () => {
-  const [movements, setMovements] = useState<Movement[] | null>(null);
+  const [products, setProducts] = useState<Product[] | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getInventoryMovements();
-        // Filtra movimientos inválidos (sin productName o con datos incompletos)
-        const validMovements = data.filter(
-          (movement) =>
-            movement.productName &&
-            movement.date &&
-            movement.entry?.units !== undefined &&
-            movement.inventory?.units !== undefined
+        const data = await getProducts();
+        // Filtra productos inválidos (sin productName o sin lotes)
+        const validProducts = data.filter(
+          (product) =>
+            product.productName &&
+            Array.isArray(product.lots)
         );
-        setMovements(validMovements);
+        setProducts(validProducts);
       } catch (error) {
-        console.error('Error al cargar movimientos:', error);
+        console.error('Error al cargar productos:', error);
       }
     };
 
     fetchData();
   }, []);
 
-  return { movements };
+  return { products };
 };

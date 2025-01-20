@@ -1,21 +1,34 @@
-export interface Movement {
-    id?: string;
-    productName: string;
-    date: string;
-    entry?: {
-      units: number;
-      pricePerUnit: number;
-      total: number;
-    };
-    exit?: {
-      units: number;
-      pricePerUnit: number;
-      total: number;
-    };
-    inventory: {
-      units: number;
-      pricePerUnit: number;
-      total: number;
-    };
-  }
-  
+// Interface para cada lote/entrada individual
+export interface Lote {
+  lotId?: string;        // Puede ser un ID interno o generado, opcional si no está disponible
+  date: string;          // Fecha de entrada
+  units: number;         // Unidades disponibles en este lote
+  pricePerUnit: number;  // Precio unitario de este lote
+}
+
+// Interface para el producto completo
+export interface Product {
+  id?: string;           // ID del documento en Firestore
+  productName: string;
+  lots: Lote[];          // Array de lotes asociados al producto
+}
+
+// Interface para los detalles de una salida de inventario
+export interface ExitDetail {
+  lotId?: string;    // ID del lote, opcional si no se conoce
+  lotDate: string;   // Fecha del lote del que se retiran unidades
+  units: number;     // Unidades retiradas de este lote
+  pricePerUnit: number;
+  total: number;     // Cálculo: units * pricePerUnit
+}
+
+// Interface para un registro de historial de salida
+export interface ExitHistoryRecord {
+  id?: string;              // ID del documento en Firestore (opcional)
+  productId: string;        // ID del producto del que se realizó la salida
+  productName: string;
+  date: string;             // Fecha y hora en que se realizó la salida
+  units: number;            // Total de unidades retiradas en esta operación
+  exitDetails: ExitDetail[];// Desglose FIFO de la salida
+  totalValue: number;       // Valor total calculado de la salida
+}

@@ -1,20 +1,20 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import TableHeader from './tableHeader';
 import TableRow from './tableRow';
-import { Movement } from '../../types/inventory';
+import { Product } from '../../types/inventory';
 
 interface TableProps {
-  movements: Movement[];
+  products: Product[];
 }
 
-const Table: FC<TableProps> = ({ movements }) => {
+const Table: FC<TableProps> = ({ products }) => {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="min-w-full border-collapse text-sm ">
+      <table className="min-w-full border-collapse text-sm">
         <TableHeader />
         <tbody>
-          {movements.map((movement) => (
-            <TableRow key={movement.id} movement={movement} />
+          {products.map((product) => (
+            <TableRow key={product.id} product={product} />
           ))}
         </tbody>
       </table>

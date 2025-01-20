@@ -1,61 +1,151 @@
-import { addDoc, collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+} from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { Movement } from '../types/inventory';
+import { Product, Lote, ExitHistoryRecord } from '../types/inventory'; // Tus nuevas interfaces
 
-// Obtiene los movimientos del inventario
-export const getInventoryMovements = async (): Promise<Movement[]> => {
-  const movementsRef = collection(db, 'movements');
-  const snapshot = await getDocs(movementsRef);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Movement[];
+// 1) Obtener todos los productos
+export const getProducts = async (): Promise<Product[]> => {
+  const productsRef = collection(db, 'products');
+  const snapshot = await getDocs(productsRef);
+
+  return snapshot.docs.map((documento) => ({
+    id: documento.id,
+    ...documento.data(),
+  })) as Product[];
 };
 
-// Agrega un movimiento al inventario
-export const addInventoryMovement = async (movement: Movement): Promise<string> => {
+// 2) Agregar un producto nuevo
+export const addProduct = async (product: Product): Promise<string> => {
   try {
-    const movementsRef = collection(db, 'movements');
-    const docRef = await addDoc(movementsRef, movement);
-    console.log('Movimiento agregado con ID:', docRef.id);
+    const productsRef = collection(db, 'products');
+    const docRef = await addDoc(productsRef, product);
+    console.log('Producto agregado con ID:', docRef.id);
     return docRef.id;
   } catch (error) {
-    console.error('Error al agregar el movimiento:', error);
-    throw new Error('No se pudo agregar el movimiento');
+    console.error('Error al agregar el producto:', error);
+    throw new Error('No se pudo agregar el producto');
   }
 };
 
-// Elimina un movimiento del inventario
-export const deleteInventoryMovement = async (id: string): Promise<void> => {
+// 3) Eliminar un producto
+export const deleteProduct = async (id: string): Promise<void> => {
   try {
-    const docRef = doc(db, 'movements', id);
+    const docRef = doc(db, 'products', id);
     await deleteDoc(docRef);
   } catch (error) {
-    console.error('Error al eliminar el documento:', error);
+    console.error('Error al eliminar el producto:', error);
     throw error;
   }
 };
 
-// Actualiza la salida de un movimiento en el inventario
-export const updateInventoryExit = async (id: string, unitsToExit: number, currentExitUnits: number, currentInventoryUnits: number): Promise<void> => {
-  if (unitsToExit > currentInventoryUnits) {
-    throw new Error('La cantidad a retirar excede el inventario disponible.');
-  }
-
+// 4) Agregar un lote a un producto existente (nueva entrada de stock)
+export const addLotToProduct = async (productId: string, newLot: Lote): Promise<void> => {
   try {
-    const docRef = doc(db, 'movements', id);
+    const productRef = doc(db, 'products', productId);
+    const productSnap = await getDoc(productRef);
 
-    // Calcular nuevos valores
-    const updatedExit = currentExitUnits + unitsToExit;
-    const updatedInventory = currentInventoryUnits - unitsToExit;
+    if (!productSnap.exists()) {
+      throw new Error('El producto no existe en la base de datos.');
+    }
 
-    // Actualizar documento en Firebase
-    await updateDoc(docRef, {
-      "exit.units": updatedExit,
-      "inventory.units": updatedInventory,
+    const productData = productSnap.data() as Product;
+    const currentLots = productData.lots || [];
+
+    // Podrías generar un lotId si no lo traes del front
+    // newLot.lotId = crypto.randomUUID(); // Por ejemplo
+
+    // Agregamos el nuevo lote al array de lotes
+    const updatedLots = [...currentLots, newLot];
+
+    await updateDoc(productRef, {
+      lots: updatedLots,
     });
   } catch (error) {
-    console.error('Error al registrar la salida:', error);
+    console.error('Error al agregar lote:', error);
     throw error;
+  }
+};
+
+// 5) Registrar salida de forma FIFO
+export const updateProductExitFIFO = async (productId: string, unitsToExit: number) => {
+  try {
+    // 5.1) Obtenemos el doc del producto
+    const productRef = doc(db, 'products', productId);
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists()) {
+      throw new Error('El producto no existe.');
+    }
+
+    const productData = productSnap.data() as Product;
+    let lots = productData.lots || [];
+
+    // 5.2) Ordenamos los lotes por fecha asc (FIFO)
+    lots = lots.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    // 5.3) Recorremos y descontamos
+    let remaining = unitsToExit;
+    const exitDetails = [];
+
+    for (let i = 0; i < lots.length; i++) {
+      if (remaining <= 0) break;
+
+      const lote = lots[i];
+
+      if (lote.units > 0) {
+        // Unidades que podemos sacar de este lote
+        const taken = Math.min(lote.units, remaining);
+
+        // Guardamos detalles de la "salida"
+        exitDetails.push({
+          lotId: lote.lotId,
+          lotDate: lote.date,
+          units: taken,
+          pricePerUnit: lote.pricePerUnit,
+          total: taken * lote.pricePerUnit,
+        });
+
+        // Descontamos en el array
+        lote.units -= taken;
+        remaining -= taken;
+      }
+    }
+
+    // 5.4) Validamos si seguimos teniendo pendiente
+    if (remaining > 0) {
+      throw new Error(
+        'No hay suficientes unidades disponibles en el inventario para completar la salida.'
+      );
+    }
+
+    // 5.5) Actualizamos el doc con los lotes actualizados
+    await updateDoc(productRef, {
+      lots,
+    });
+
+    // Opcional: podrías retornar exitDetails para que el front muestre de qué lotes se tomó.
+    return exitDetails;
+  } catch (error) {
+    console.error('Error al registrar salida FIFO:', error);
+    throw error;
+  }
+};
+
+export const recordExitHistory = async (record: ExitHistoryRecord): Promise<void> => {
+  try {
+    const exitsRef = collection(db, 'exits');
+    await addDoc(exitsRef, record);
+  } catch (error) {
+    console.error('Error al registrar historial de salida:', error);
+    throw new Error('No se pudo registrar el historial de salida.');
   }
 };
