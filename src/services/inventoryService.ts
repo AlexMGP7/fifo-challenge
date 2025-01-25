@@ -73,33 +73,41 @@ export const addLotToProduct = async (productId: string, newLot: Lote): Promise<
   }
 };
 
+type LoteWithParsedDate = Lote & { parsedDate: Date };
+
 // 5) Registrar salida de forma FIFO
 export const updateProductExitFIFO = async (productId: string, unitsToExit: number) => {
   try {
     // 5.1) Obtenemos el doc del producto
-    const productRef = doc(db, 'products', productId);
+    const productRef = doc(db, "products", productId);
     const productSnap = await getDoc(productRef);
 
     if (!productSnap.exists()) {
-      throw new Error('El producto no existe.');
+      throw new Error("El producto no existe.");
     }
 
     const productData = productSnap.data() as Product;
     let lots = productData.lots || [];
 
-    // 5.2) Ordenamos los lotes por fecha asc (FIFO)
-    lots = lots.sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+    // 5.2) Convertimos las fechas a formato ISO y añadimos `parsedDate`
+    const lotsWithParsedDate: LoteWithParsedDate[] = lots.map((lote) => ({
+      ...lote,
+      parsedDate: new Date(
+        lote.date.split("/").reverse().join("-") // Convertimos DD/MM/YYYY a YYYY-MM-DD
+      ),
+    }));
 
-    // 5.3) Recorremos y descontamos
+    // 5.3) Ordenamos los lotes por fecha ascendente (FIFO)
+    lotsWithParsedDate.sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime());
+
+    // 5.4) Recorremos y descontamos
     let remaining = unitsToExit;
     const exitDetails = [];
 
-    for (let i = 0; i < lots.length; i++) {
+    for (let i = 0; i < lotsWithParsedDate.length; i++) {
       if (remaining <= 0) break;
 
-      const lote = lots[i];
+      const lote = lotsWithParsedDate[i];
 
       if (lote.units > 0) {
         // Unidades que podemos sacar de este lote
@@ -108,7 +116,7 @@ export const updateProductExitFIFO = async (productId: string, unitsToExit: numb
         // Guardamos detalles de la "salida"
         exitDetails.push({
           lotId: lote.lotId,
-          lotDate: lote.date,
+          lotDate: lote.date, // Mantén el formato original de la fecha
           units: taken,
           pricePerUnit: lote.pricePerUnit,
           total: taken * lote.pricePerUnit,
@@ -120,25 +128,29 @@ export const updateProductExitFIFO = async (productId: string, unitsToExit: numb
       }
     }
 
-    // 5.4) Validamos si seguimos teniendo pendiente
+    // 5.5) Validamos si seguimos teniendo pendiente
     if (remaining > 0) {
       throw new Error(
-        'No hay suficientes unidades disponibles en el inventario para completar la salida.'
+        "No hay suficientes unidades disponibles en el inventario para completar la salida."
       );
     }
 
-    // 5.5) Actualizamos el doc con los lotes actualizados
+    // 5.6) Eliminamos las fechas parseadas antes de actualizar
+    const updatedLots = lotsWithParsedDate.map(({ parsedDate, ...lote }) => lote);
+
+    // 5.7) Actualizamos el doc con los lotes actualizados
     await updateDoc(productRef, {
-      lots,
+      lots: updatedLots,
     });
 
-    // Opcional: podrías retornar exitDetails para que el front muestre de qué lotes se tomó.
+    // Retornamos los detalles de la salida
     return exitDetails;
   } catch (error) {
-    console.error('Error al registrar salida FIFO:', error);
+    console.error("Error al registrar salida FIFO:", error);
     throw error;
   }
 };
+
 
 export const recordExitHistory = async (record: ExitHistoryRecord): Promise<void> => {
   try {
