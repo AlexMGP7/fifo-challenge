@@ -8,7 +8,7 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { Product, Lote, ExitHistoryRecord } from '../types/inventory'; // Tus nuevas interfaces
+import { Product, Lote, ExitHistoryRecord } from '../types/inventory';
 
 // 1) Obtener todos los productos
 export const getProducts = async (): Promise<Product[]> => {
