@@ -47,7 +47,6 @@ const TableRow: FC<TableRowProps> = ({ product }) => {
     );
 
     if (!unitsToExit) {
-      showError("Operación cancelada.");
       return;
     }
 
@@ -162,12 +161,8 @@ const TableRow: FC<TableRowProps> = ({ product }) => {
     if (!formValues) return;
   
     try {
-      // Convertir la fecha a formato ISO para guardarla en la base de datos
-      const [day, month, year] = formValues.loteDate.split("/");
-      const isoDate = new Date(`${year}-${month}-${day}`).toISOString();
-  
       const newLot = {
-        date: isoDate,
+        date: formValues.loteDate, // Almacenar en formato DD/MM/YYYY
         units: Number(formValues.loteUnits),
         pricePerUnit: Number(formValues.lotePrice),
       };
@@ -178,7 +173,8 @@ const TableRow: FC<TableRowProps> = ({ product }) => {
       console.error("Error al agregar lote:", error);
       showError("No se pudo agregar el lote.");
     }
-  };  
+  };
+  
 
   /**
    * Calcular el total de unidades disponibles sumando todos los lotes

@@ -6,6 +6,7 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  onSnapshot,
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Product, Lote, ExitHistoryRecord } from '../types/inventory';
@@ -151,6 +152,21 @@ export const updateProductExitFIFO = async (productId: string, unitsToExit: numb
   }
 };
 
+export const getExits = (callback: (exits: ExitHistoryRecord[]) => void) => {
+  const exitsRef = collection(db, 'exits');
+
+  const unsubscribe = onSnapshot(exitsRef, (snapshot) => {
+    const exits: ExitHistoryRecord[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ExitHistoryRecord[];
+    callback(exits);
+  }, (error) => {
+    console.error("Error al obtener las salidas:", error);
+  });
+
+  return unsubscribe; // Retorna la función para cancelar la suscripción
+};
 
 export const recordExitHistory = async (record: ExitHistoryRecord): Promise<void> => {
   try {

@@ -1,29 +1,37 @@
+// src/components/Navbar.tsx
+
 import useTheme from '../hooks/useTheme';
-import { Disclosure, DisclosureButton } from '@headlessui/react';
+import { Disclosure } from '@headlessui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
 import { FC } from 'react';
+import { NavLink } from 'react-router-dom';
 
 const navigation = [
-  { name: 'Principal', href: '/dashboard', current: true },
-  { name: 'Historial', href: '/history', current: false },
+  { name: 'Principal', href: '/dashboard' },
+  { name: 'Historial', href: '/history' },
 ];
 
-const getNavLinkClasses = (current: boolean) =>
-  `${current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}
+// Función para asignar clases dinámicamente
+const getNavLinkClasses = (isActive: boolean) =>
+  `${isActive ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}
    block rounded-md px-3 py-2 text-base font-medium`;
 
 const NavigationLinks: FC = () => (
   <>
     {navigation.map((item) => (
-      <a key={item.name} href={item.href} className={getNavLinkClasses(item.current)}>
+      <NavLink
+        key={item.name}
+        to={item.href}
+        className={({ isActive }) => getNavLinkClasses(isActive)}
+      >
         {item.name}
-      </a>
+      </NavLink>
     ))}
   </>
 );
 
-export default function Navbar() {
+const Navbar: FC = () => {
   const { theme, toggleTheme } = useTheme(); // Usar el hook personalizado para el tema
 
   const handleSignOut = async () => {
@@ -43,9 +51,9 @@ export default function Navbar() {
         <div className="relative flex h-16 items-center justify-between">
           {/* Menú responsive */}
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
+            <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
               <Bars3Icon className="block h-6 w-6" />
-            </DisclosureButton>
+            </Disclosure.Button>
           </div>
 
           {/* Navegación principal */}
@@ -58,7 +66,6 @@ export default function Navbar() {
                 alt="FIFO System"
               />
             </div>
-
 
             {/* Links de navegación */}
             <div className="hidden sm:ml-6 sm:block">
@@ -101,4 +108,6 @@ export default function Navbar() {
       </Disclosure.Panel>
     </Disclosure>
   );
-}
+};
+
+export default Navbar;

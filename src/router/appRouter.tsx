@@ -9,6 +9,7 @@ import ProtectedLayout from "../layouts/protectedLayout";
 import Dashboard from "../pages/dashboard";
 import Login from "../pages/login";
 import AddProduct from "../pages/addProduct";
+import History from "../pages/history";
 
 const AppRouter: FC = () => {
   const { loading } = useAuth();
@@ -21,7 +22,7 @@ const AppRouter: FC = () => {
     <Router>
       <Routes>
         {/* Redirección desde la raíz */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         {/* Ruta pública */}
         <Route path="/login" element={<Login />} />
@@ -47,9 +48,19 @@ const AppRouter: FC = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/history"
+          element={
+            <PrivateRoute>
+              <ProtectedLayout>
+                <History />
+              </ProtectedLayout>
+            </PrivateRoute>
+          }
+        />
 
         {/* Ruta por defecto en caso de 404 */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );
