@@ -215,6 +215,8 @@ const TableRow: FC<TableRowProps> = ({ product }) => {
     return () => unsubscribe();
   }, [product.id]);
 
+  
+
   return (
     <tr className="even:bg-gray-300 odd:bg-white dark:even:bg-gray-900 dark:odd:bg-gray-800">
       <td className="border px-4 py-2">{product.productName}</td>

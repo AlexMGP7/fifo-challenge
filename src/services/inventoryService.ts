@@ -7,41 +7,58 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
-} from 'firebase/firestore';
-import { db } from './firebaseConfig';
-import { Product, Lote, ExitHistoryRecord } from '../types/inventory';
+  query,
+  where,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { db } from "./firebaseConfig";
+import { Product, Lote, ExitHistoryRecord } from "../types/inventory";
 
-// 1) Obtener todos los productos
+// 1) Obtener todos los productos de un usuario
 export const getProducts = async (): Promise<Product[]> => {
-  const productsRef = collection(db, 'products');
-  const snapshot = await getDocs(productsRef);
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-  return snapshot.docs.map((documento) => ({
-    id: documento.id,
-    ...documento.data(),
+  if (!user) throw new Error("No hay un usuario autenticado");
+
+  const productsRef = collection(db, "products");
+  const q = query(productsRef, where("ownerId", "==", user.uid));
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
   })) as Product[];
 };
 
 // 2) Agregar un producto nuevo
-export const addProduct = async (product: Product): Promise<string> => {
+export const addProduct = async (product: Omit<Product, "ownerId">): Promise<string> => {
   try {
-    const productsRef = collection(db, 'products');
-    const docRef = await addDoc(productsRef, product);
-    console.log('Producto agregado con ID:', docRef.id);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) throw new Error("No hay un usuario autenticado");
+
+    const productsRef = collection(db, "products");
+    const docRef = await addDoc(productsRef, {
+      ...product,
+      ownerId: user.uid, // Asociar el producto al usuario actual
+    });
+    console.log("Producto agregado con ID:", docRef.id);
     return docRef.id;
   } catch (error) {
-    console.error('Error al agregar el producto:', error);
-    throw new Error('No se pudo agregar el producto');
+    console.error("Error al agregar el producto:", error);
+    throw new Error("No se pudo agregar el producto");
   }
 };
 
 // 3) Eliminar un producto
 export const deleteProduct = async (id: string): Promise<void> => {
   try {
-    const docRef = doc(db, 'products', id);
+    const docRef = doc(db, "products", id);
     await deleteDoc(docRef);
   } catch (error) {
-    console.error('Error al eliminar el producto:', error);
+    console.error("Error al eliminar el producto:", error);
     throw error;
   }
 };
@@ -49,37 +66,32 @@ export const deleteProduct = async (id: string): Promise<void> => {
 // 4) Agregar un lote a un producto existente (nueva entrada de stock)
 export const addLotToProduct = async (productId: string, newLot: Lote): Promise<void> => {
   try {
-    const productRef = doc(db, 'products', productId);
+    const productRef = doc(db, "products", productId);
     const productSnap = await getDoc(productRef);
 
     if (!productSnap.exists()) {
-      throw new Error('El producto no existe en la base de datos.');
+      throw new Error("El producto no existe en la base de datos.");
     }
 
     const productData = productSnap.data() as Product;
     const currentLots = productData.lots || [];
 
-    // Podrías generar un lotId si no lo traes del front
-    // newLot.lotId = crypto.randomUUID(); // Por ejemplo
-
-    // Agregamos el nuevo lote al array de lotes
     const updatedLots = [...currentLots, newLot];
 
     await updateDoc(productRef, {
       lots: updatedLots,
     });
   } catch (error) {
-    console.error('Error al agregar lote:', error);
+    console.error("Error al agregar lote:", error);
     throw error;
   }
 };
 
+// 5) Registrar salida de forma FIFO
 type LoteWithParsedDate = Lote & { parsedDate: Date };
 
-// 5) Registrar salida de forma FIFO
 export const updateProductExitFIFO = async (productId: string, unitsToExit: number) => {
   try {
-    // 5.1) Obtenemos el doc del producto
     const productRef = doc(db, "products", productId);
     const productSnap = await getDoc(productRef);
 
@@ -90,18 +102,15 @@ export const updateProductExitFIFO = async (productId: string, unitsToExit: numb
     const productData = productSnap.data() as Product;
     let lots = productData.lots || [];
 
-    // 5.2) Convertimos las fechas a formato ISO y añadimos `parsedDate`
     const lotsWithParsedDate: LoteWithParsedDate[] = lots.map((lote) => ({
       ...lote,
       parsedDate: new Date(
-        lote.date.split("/").reverse().join("-") // Convertimos DD/MM/YYYY a YYYY-MM-DD
+        lote.date.split("/").reverse().join("-")
       ),
     }));
 
-    // 5.3) Ordenamos los lotes por fecha ascendente (FIFO)
     lotsWithParsedDate.sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime());
 
-    // 5.4) Recorremos y descontamos
     let remaining = unitsToExit;
     const exitDetails = [];
 
@@ -111,40 +120,31 @@ export const updateProductExitFIFO = async (productId: string, unitsToExit: numb
       const lote = lotsWithParsedDate[i];
 
       if (lote.units > 0) {
-        // Unidades que podemos sacar de este lote
         const taken = Math.min(lote.units, remaining);
 
-        // Guardamos detalles de la "salida"
         exitDetails.push({
           lotId: lote.lotId,
-          lotDate: lote.date, // Mantén el formato original de la fecha
+          lotDate: lote.date,
           units: taken,
           pricePerUnit: lote.pricePerUnit,
           total: taken * lote.pricePerUnit,
         });
 
-        // Descontamos en el array
         lote.units -= taken;
         remaining -= taken;
       }
     }
 
-    // 5.5) Validamos si seguimos teniendo pendiente
     if (remaining > 0) {
-      throw new Error(
-        "No hay suficientes unidades disponibles en el inventario para completar la salida."
-      );
+      throw new Error("No hay suficientes unidades disponibles en el inventario para completar la salida.");
     }
 
-    // 5.6) Eliminamos las fechas parseadas antes de actualizar
     const updatedLots = lotsWithParsedDate.map(({ parsedDate, ...lote }) => lote);
 
-    // 5.7) Actualizamos el doc con los lotes actualizados
     await updateDoc(productRef, {
       lots: updatedLots,
     });
 
-    // Retornamos los detalles de la salida
     return exitDetails;
   } catch (error) {
     console.error("Error al registrar salida FIFO:", error);
@@ -152,28 +152,50 @@ export const updateProductExitFIFO = async (productId: string, unitsToExit: numb
   }
 };
 
+// 6) Obtener salidas para el usuario actual
 export const getExits = (callback: (exits: ExitHistoryRecord[]) => void) => {
-  const exitsRef = collection(db, 'exits');
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-  const unsubscribe = onSnapshot(exitsRef, (snapshot) => {
-    const exits: ExitHistoryRecord[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as ExitHistoryRecord[];
-    callback(exits);
-  }, (error) => {
-    console.error("Error al obtener las salidas:", error);
-  });
+  if (!user) throw new Error("No hay un usuario autenticado");
 
-  return unsubscribe; // Retorna la función para cancelar la suscripción
+  const exitsRef = collection(db, "exits");
+  const q = query(exitsRef, where("ownerId", "==", user.uid));
+
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      const exits: ExitHistoryRecord[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as ExitHistoryRecord[];
+      callback(exits);
+    },
+    (error) => {
+      console.error("Error al obtener las salidas:", error);
+    }
+  );
+
+  return unsubscribe;
 };
 
-export const recordExitHistory = async (record: ExitHistoryRecord): Promise<void> => {
+// 7) Registrar historial de salida
+export const recordExitHistory = async (
+  record: Omit<ExitHistoryRecord, "ownerId">
+): Promise<void> => {
   try {
-    const exitsRef = collection(db, 'exits');
-    await addDoc(exitsRef, record);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) throw new Error("No hay un usuario autenticado");
+
+    const exitsRef = collection(db, "exits");
+    await addDoc(exitsRef, {
+      ...record,
+      ownerId: user.uid, // Asociar la salida al usuario autenticado
+    });
   } catch (error) {
-    console.error('Error al registrar historial de salida:', error);
-    throw new Error('No se pudo registrar el historial de salida.');
+    console.error("Error al registrar historial de salida:", error);
+    throw new Error("No se pudo registrar el historial de salida.");
   }
 };
