@@ -8,7 +8,7 @@ interface StatsProps {
 
 const Stats: FC<StatsProps> = ({ totalProducts, totalUnits, totalValue }) => {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
+    <div className="stats-section grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
       <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
         <h2 className="text-lg font-bold">Total de Productos</h2>
         <p className="text-2xl">{totalProducts}</p>

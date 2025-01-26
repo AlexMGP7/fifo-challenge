@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/authContext";
 import PrivateRoute from "../components/privateRoute";
 import Loading from "../components/loading";
 import ProtectedLayout from "../layouts/protectedLayout";
+import Tutorial from "../components/tutorial";
 
 import Dashboard from "../pages/dashboard";
 import Login from "../pages/login";
@@ -21,19 +22,17 @@ const AppRouter: FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Redirección desde la raíz */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-        {/* Ruta pública */}
         <Route path="/login" element={<Login />} />
-
-        {/* Rutas protegidas con Layout */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
               <ProtectedLayout>
-                <Dashboard />
+                <>
+                  <Tutorial />
+                  <Dashboard />
+                </>
               </ProtectedLayout>
             </PrivateRoute>
           }
@@ -43,7 +42,10 @@ const AppRouter: FC = () => {
           element={
             <PrivateRoute>
               <ProtectedLayout>
-                <AddProduct />
+                <>
+                  <Tutorial />
+                  <AddProduct />
+                </>
               </ProtectedLayout>
             </PrivateRoute>
           }
@@ -53,13 +55,14 @@ const AppRouter: FC = () => {
           element={
             <PrivateRoute>
               <ProtectedLayout>
-                <History />
+                <>
+                  <Tutorial />
+                  <History />
+                </>
               </ProtectedLayout>
             </PrivateRoute>
           }
         />
-
-        {/* Ruta por defecto en caso de 404 */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
