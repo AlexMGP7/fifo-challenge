@@ -9,7 +9,7 @@ interface TableProps {
 
 const Table: FC<TableProps> = ({ products }) => {
   return (
-    <div className="tables relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="table-tuto relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="min-w-full border-collapse text-sm">
         <TableHeader />
         <tbody>
