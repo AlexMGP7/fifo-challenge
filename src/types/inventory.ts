@@ -11,7 +11,7 @@ export interface Product {
   id?: string;           // ID del documento en Firestore
   productName: string;   // Nombre del producto
   lots: Lote[];          // Array de lotes asociados al producto
-  ownerId: string;       // ID del usuario propietario
+  ownerId?: string;       // ID del usuario propietario
 }
 
 

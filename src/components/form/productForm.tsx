@@ -46,7 +46,7 @@ const ProductForm: FC = () => {
   };
 
   return (
-    <div className="max-w-sm mx-auto">
+    <div className="product-form max-w-sm mx-auto">
       <BackButton label="Volver al Inventario" />
 
       <form onSubmit={handleSubmit}>

@@ -42,7 +42,7 @@ const History: FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="history-table container mx-auto px-4 py-6">
       {/* Encabezado */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Historial de Salidas</h1>
