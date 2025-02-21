@@ -1,5 +1,10 @@
 import { FC } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import ProtectedLayout from "../layouts/protectedLayout";
 import Tutorial from "../components/tutorial";
 import Dashboard from "../pages/dashboard";
@@ -9,6 +14,7 @@ import History from "../pages/history";
 import CatalogMenFranelasPage from "../pages/hombres-franelas";
 import CatalogMenZapatosPage from "../pages/hombres-zapatos";
 import CatalogMenPantalonesPage from "../pages/hombres-pantalones";
+import { CartProvider } from "../context/cartContext"; // Importar el CartProvider
 
 const AppRouter: FC = () => {
   // Si ya no necesitas el contexto de autenticación, puedes eliminar esta línea.
@@ -62,8 +68,8 @@ const AppRouter: FC = () => {
           element={
             <ProtectedLayout>
               <>
-                <Tutorial />
-                <CatalogMenPantalonesPage />
+                  <Tutorial />
+                  <CatalogMenPantalonesPage />
               </>
             </ProtectedLayout>
           }
