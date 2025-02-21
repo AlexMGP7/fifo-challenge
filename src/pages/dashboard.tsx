@@ -1,130 +1,77 @@
-import { FC, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Table from "../components/table/table";
-import Stats from "../components/stats/stats";
-import SearchBar from "../components/searchBar/searchBar";
-import PaginationControls from "../components/paginationControls/paginationControls";
-import { Product } from "../types/inventory";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { db } from "../services/firebaseConfig";
+import React from "react";
+import Card_product from "../components/card-product/card-product";
 
-const ITEMS_PER_PAGE = 8;
 
-const Dashboard: FC = () => {
-  const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true); // Estado de carga
-  const [error, setError] = useState<string | null>(null); // Estado de error
-
-  useEffect(() => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) {
-      setError("Usuario no autenticado.");
-      setLoading(false);
-      return;
-    }
-
-    const productsCollection = collection(db, "products");
-    const q = query(productsCollection, where("ownerId", "==", currentUser.uid));
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const updatedProducts = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Product[];
-        setProducts(updatedProducts);
-        setLoading(false); // Detenemos el loading al cargar los productos
-      },
-      (error: Error) => {
-        console.error("Error al obtener productos:", error);
-        setError("No se pudieron cargar los productos. Intenta nuevamente.");
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, []);
-
-  // Filtrar productos según la consulta de búsqueda
-  const filteredProducts = products.filter((product) =>
-    product.productName?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  // Calcular unidades y valor total del inventario a partir de todos los lotes
-  const totalInventoryUnits = products.reduce((sum, product) => {
-    const lots = product.lots || []; // Si product.lots es undefined, usar []
-    const productUnits = lots.reduce((acc, lote) => acc + (lote.units || 0), 0);
-    return sum + productUnits;
-  }, 0);
-
-  const totalInventoryValue = products.reduce((sum, product) => {
-    const lots = product.lots || []; // Si product.lots es undefined, usar []
-    const productValue = lots.reduce(
-      (acc, lote) => acc + (lote.units || 0) * (lote.pricePerUnit || 0),
-      0
-    );
-    return sum + productValue;
-  }, 0);
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
+function Button({ children, ...props }) {
   return (
-    <div className="container mx-auto px-4 py-6">
-      {loading ? (
-        <p className="text-center text-gray-500">Cargando productos...</p>
-      ) : error ? (
-        <p className="text-center text-red-500">{error}</p>
-      ) : (
-        <>
-          <Stats
-            totalProducts={products.length}
-            totalUnits={totalInventoryUnits}
-            totalValue={totalInventoryValue}
-          />
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Inventario</h1>
-            <button
-              onClick={() => navigate("/add-product")}
-              className="add-product-button bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded"
-            >
-              Agregar Producto
-            </button>
+    <button
+      {...props}
+      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+    >
+      {children}
+    </button>
+  );
+}
+
+function Home() {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <main className="container mx-auto px-4 py-8">
+        <section className="mb-12">
+          <div className="relative">
+            <img
+              src="https://via.placeholder.com/1200x400"
+              alt="Featured product"
+              className="w-full h-[400px] object-cover rounded-lg"
+            />
+            <div className="absolute inset-0 flex flex-col justify-center items-start p-8 bg-black bg-opacity-40 text-white rounded-lg">
+              <h2 className="text-4xl font-bold mb-4">Colección</h2>
+              <p className="text-xl mb-6">Descubre muchos más</p>
+              <Button>Ver más</Button>
+            </div>
           </div>
-          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-          {paginatedProducts.length > 0 ? (
-            <>
-              <Table products={paginatedProducts} />
-              <PaginationControls
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </>
-          ) : (
-            <p className="text-center text-gray-500">No se encontraron resultados.</p>
-          )}
-        </>
-      )}
+        </section>
+
+        <div>
+          <Card_product />
+        </div>
+      </main>
+
+      <footer className="bg-gray-800 text-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">About Us</h3>
+              <p className="text-gray-400">
+                FashionStore is your one-stop destination for trendy and affordable clothing.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-400 hover:text-white">FAQs</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white">Shipping</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white">Returns</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white">Contact Us</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
+              <p className="text-gray-400 mb-4">Subscribe to get special offers and updates.</p>
+              <form className="flex">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-grow px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <Button type="submit" className="rounded-l-none">Subscribe</Button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-};
+}
 
-export default Dashboard;
+export default Home;
