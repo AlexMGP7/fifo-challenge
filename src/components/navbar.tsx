@@ -7,11 +7,45 @@ const Navbar: FC = () => {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
     useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  
 
   const calculateTotal = () => {
     return cart
       .reduce((total, item) => total + item.price * item.quantity, 0)
       .toFixed(2);
+  };
+
+  const handleCheckout = async () => {
+    try {
+      // Transformar el carrito al formato requerido
+      const transformedCart = cart.map((item) => ({
+        id: item._id, // Usar _id como id
+        quantity: item.quantity, // Mantener la cantidad
+      }));
+  
+      console.log("Datos del carrito transformados:", transformedCart);
+  
+      // Enviar el carrito transformado al backend
+      const response = await fetch("http://localhost:3001/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cart: transformedCart }), // Envía el carrito transformado
+      });
+  
+      if (response.ok) {
+        console.log("Compra finalizada y stock actualizado");
+        setIsCartOpen(false); // Cierra el carrito
+      } else {
+        console.error("Error al finalizar la compra");
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`); // Muestra un mensaje de error al usuario
+      }
+    } catch (error) {
+      console.error("Error de conexión:", error);
+      alert("Error de conexión con el servidor"); // Muestra un mensaje de error al usuario
+    }
   };
 
   return (
@@ -110,6 +144,13 @@ const Navbar: FC = () => {
                             ${calculateTotal()}
                           </span>
                         </div>
+                        {/* Botón de Finalizar Compra */}
+                        <button
+                          onClick={handleCheckout}
+                          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          Finalizar Compra
+                        </button>
                       </div>
                     </>
                   )}

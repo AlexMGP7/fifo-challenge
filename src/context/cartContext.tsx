@@ -25,6 +25,7 @@ export const CartProvider: React.FC = ({ children }) => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('cart', JSON.stringify(cart));
