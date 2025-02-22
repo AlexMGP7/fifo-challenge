@@ -15,6 +15,7 @@ interface CartContextType {
   removeFromCart: (productId: string) => void;
   increaseQuantity: (productId: string) => void;
   decreaseQuantity: (productId: string) => void;
+  clearCart: () => void; // Asegúrate de incluir clearCart en la interfaz
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,13 +26,19 @@ export const CartProvider: React.FC = ({ children }) => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  // Función para vaciar el carrito
+  const clearCart = () => {
+    setCart([]); // Vacía el carrito
+  };
 
+  // Guardar el carrito en localStorage cada vez que cambie
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('cart', JSON.stringify(cart));
     }
   }, [cart]);
 
+  // Función para agregar un producto al carrito
   const addToCart = (product: Product) => {
     setCart((prev) => {
       const existingItem = prev.find((item) => item.id === product.id);
@@ -44,10 +51,12 @@ export const CartProvider: React.FC = ({ children }) => {
     });
   };
 
+  // Función para eliminar un producto del carrito
   const removeFromCart = (productId: string) => {
     setCart((prev) => prev.filter((item) => item.id !== productId));
   };
 
+  // Función para aumentar la cantidad de un producto en el carrito
   const increaseQuantity = (productId: string) => {
     setCart((prev) =>
       prev.map((item) =>
@@ -56,6 +65,7 @@ export const CartProvider: React.FC = ({ children }) => {
     );
   };
 
+  // Función para disminuir la cantidad de un producto en el carrito
   const decreaseQuantity = (productId: string) => {
     setCart((prev) =>
       prev.map((item) =>
@@ -67,12 +77,15 @@ export const CartProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
+// Hook personalizado para usar el contexto del carrito
 export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
   if (!context) {

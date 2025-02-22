@@ -2,9 +2,10 @@ import { ShoppingCart, Menu, X, Plus, Minus } from "lucide-react";
 import { FC, useState } from "react";
 import { useCart } from "../context/cartContext";
 
+
 const Navbar: FC = () => {
   // En el Navbar component, actualiza la destructuración del useCart:
-  const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
+  const { cart, increaseQuantity, decreaseQuantity, removeFromCart, clearCart } =
     useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
   
@@ -36,6 +37,7 @@ const Navbar: FC = () => {
   
       if (response.ok) {
         console.log("Compra finalizada y stock actualizado");
+        clearCart(); // Limpia el carrito
         setIsCartOpen(false); // Cierra el carrito
       } else {
         console.error("Error al finalizar la compra");
