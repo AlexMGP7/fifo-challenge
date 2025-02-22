@@ -1,13 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { clothingItems } from "../components/ItemsClothing/hombres_pantalones";
 import { useCart } from "../context/cartContext";
 import { ShoppingCart } from "lucide-react";
 
 export default function CatalogMenZapatosPage() {
-  const { addToCart } = useCart(); // Usar el contexto del carrito
+  const { addToCart } = useCart();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true); // Estado añadido
+  const [error, setError] = useState<string | null>(null); // Estado añadido
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/products/men-zapatos"
+        );
+        if (!response.ok) throw new Error("Error en la solicitud");
+        const data = await response.json();
+        console.log("Data", response);
+        setProducts(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Variantes de animación
+    fetchProducts();
+  }, []);
+
+  // Muestra estados de carga/error
+  if (loading)
+    return <div className="text-center py-8">Cargando productos...</div>;
+  if (error)
+    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -52,17 +79,17 @@ export default function CatalogMenZapatosPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ type: "spring", stiffness: 50 }}
         >
-          Nuestra Colección de pantalones
+          Nuestra Colección de zapatos
         </motion.h1>
 
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           variants={containerVariants}
         >
-          {clothingItems.map((item) => (
+          {products.map((item) => (
             <motion.a
-              href={`/product/${item.id}`}
-              key={item.id}
+              href={`/product/${item._id}`}
+              key={item._id}
               className="group"
               variants={itemVariants}
               whileHover={{ y: -5 }}
@@ -108,11 +135,11 @@ export default function CatalogMenZapatosPage() {
                   <motion.button
                     className="absolute top-2 right-2 p-2 rounded-full bg-blue-500 text-white"
                     onClick={(e) => {
-                      e.preventDefault(); // Previene el comportamiento por defecto
-                      e.stopPropagation(); // Detiene la propagación del evento
+                      e.preventDefault();
+                      e.stopPropagation();
                       addToCart(item);
                     }}
-                    type="button" // Asegura que no sea de tipo submit
+                    type="button"
                   >
                     <ShoppingCart className="h-6 w-6" />
                   </motion.button>

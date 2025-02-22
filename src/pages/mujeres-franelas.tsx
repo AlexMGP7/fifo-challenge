@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { clothingItems } from "../components/ItemsClothing/hombres_pantalones";
 import { useCart } from "../context/cartContext";
 import { ShoppingCart } from "lucide-react";
 
-export default function CatalogMenFranelasPage() {
+export default function CatalogWomenFranelasPage() {
   const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true); // Estado añadido
     const [error, setError] = useState<string | null>(null); // Estado añadido
   
     useEffect(() => {
-      const fetchFranelasMen = async () => {
+      const fetchFranelasWoman = async () => {
         try {
           const response = await fetch(
-            "http://localhost:3001/api/products/men-franelas"
+            "http://localhost:3001/api/products/woman-franelas"
           );
           if (!response.ok) throw new Error("Error en la solicitud");
           const data = await response.json();
@@ -27,7 +26,7 @@ export default function CatalogMenFranelasPage() {
         }
       };
   
-      fetchFranelasMen();
+      fetchFranelasWoman();
     }, []);
   
   

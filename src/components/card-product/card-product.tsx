@@ -126,9 +126,9 @@ const Card_product: FC = () => {
                   <Link
                     to={`/${
                       [
-                        "pantalones-hombre",
-                        "zapatos-hombre",
-                        "franelas-hombre",
+                        "pantalones-mujeres",
+                        "zapatos-mujeres",
+                        "franelas-mujeres",
                       ][index]
                     }`}
                   >

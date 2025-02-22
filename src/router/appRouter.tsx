@@ -10,6 +10,9 @@ import Dashboard from "../pages/dashboard";
 import CatalogMenFranelasPage from "../pages/hombres-franelas";
 import CatalogMenZapatosPage from "../pages/hombres-zapatos";
 import CatalogMenPantalonesPage from "../pages/hombres-pantalones";
+import CatalogWomenFranelasPage from "../pages/mujeres-franelas";
+import CatalogWomenZapatosPage from "../pages/mujeres-zapatos";
+import CatalogWomenPantalonesPage from "../pages/mujeres-pantalones";
 
 const AppRouter: FC = () => {
   // Si ya no necesitas el contexto de autenticación, puedes eliminar esta línea.
@@ -30,6 +33,36 @@ const AppRouter: FC = () => {
             <ProtectedLayout>
               <>
                 <Dashboard />
+              </>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/pantalones-mujeres"
+          element={
+            <ProtectedLayout>
+              <>
+                <CatalogWomenPantalonesPage />
+              </>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/zapatos-mujeres"
+          element={
+            <ProtectedLayout>
+              <>
+                <CatalogWomenZapatosPage />
+              </>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/franelas-mujeres"
+          element={
+            <ProtectedLayout>
+              <>
+                <CatalogWomenFranelasPage />
               </>
             </ProtectedLayout>
           }
