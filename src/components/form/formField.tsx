@@ -1,34 +1,26 @@
-import {ChangeEvent,FC } from 'react';
+import { type FC, type InputHTMLAttributes } from 'react';
 
-interface FormFieldProps {
+// 1. La interfaz ahora "extiende" todos los atributos de un input.
+// Esto nos da acceso a `type`, `placeholder`, `required`, `disabled`, `value`, etc.
+interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
-  value: string | number | undefined;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  type?: string;
 }
 
-const FormField: FC<FormFieldProps> = ({
-  id,
-  label,
-  value,
-  onChange,
-  placeholder = '',
-  type = 'text',
+const FormField: FC<FormFieldProps> = ({ 
+  id, 
+  label, 
+  className, // Podemos sacar className para fusionarlo con nuestras clases
+  ...rest  // El resto de las props (type, value, onChange, required, etc.) van aquí
 }) => (
   <div className="mb-5">
     <label htmlFor={id} className="block mb-2 text-sm font-medium">
       {label}
     </label>
     <input
-      type={type}
       id={id}
-      value={value !== undefined ? value : ''}
-      onChange={onChange}
-      placeholder={placeholder}
-      className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      required
+      {...rest}
+      className={`bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${className || ''}`}
     />
   </div>
 );
